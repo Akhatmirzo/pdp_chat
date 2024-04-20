@@ -1,0 +1,52 @@
+[
+    {
+        "id": 1,
+        "username": "user_1",
+        "photo": "https://example.com/user_1.jpg"
+    },
+    {
+        "id": 2,
+        "username": "user_2",
+        "photo": "https://example.com/user_2.jpg"
+    },
+    {
+        "id": 3,
+        "username": "user_3",
+        "photo": "https://example.com/user_3.jpg"
+    },
+    {
+        "id": 4,
+        "username": "user_4",
+        "photo": "https://example.com/user_4.jpg"
+    },
+    {
+        "id": 5,
+        "username": "user_5",
+        "photo": "https://example.com/user_5.jpg"
+    },
+    {
+        "id": 6,
+        "username": "user_6",
+        "photo": "https://example.com/user_6.jpg"
+    },
+    {
+        "id": 7,
+        "username": "user_7",
+        "photo": "https://example.com/user_7.jpg"
+    },
+    {
+        "id": 8,
+        "username": "user_8",
+        "photo": "https://example.com/user_8.jpg"
+    },
+    {
+        "id": 9,
+        "username": "user_9",
+        "photo": "https://example.com/user_9.jpg"
+    },
+    {
+        "id": 10,
+        "username": "user_10",
+        "photo": "https://example.com/user_10.jpg"
+    }
+]

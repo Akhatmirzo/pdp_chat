@@ -1,0 +1,18 @@
+/* search input */
+.css-1rn6w7t-MuiInputBase-root-MuiOutlinedInput-root,
+.css-1q6at85-MuiInputBase-root-MuiOutlinedInput-root {
+  width: 284px !important;
+  border-radius: 12px !important;
+  padding-block: 3px;
+}
+
+/* Plus button */
+.css-1behch8-MuiButtonBase-root-MuiButton-root,
+.css-me2175-MuiButtonBase-root-MuiButton-root {
+  background-color: #00a3ff !important;
+}
+
+/* Icons style custum */
+.MuiIcon-fontSizeSmall {
+  font-size: 12px;
+}
