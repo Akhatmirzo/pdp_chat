@@ -2,11 +2,26 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/cors": "^7.0.0",
+    "@fastify/multipart": "^6.0.0",
+    "@fastify/static": "^5.0.0",
+    "@fastify/swagger": "^6.0.0",
+    "bcrypt": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "fastify": "^3.20.1",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^8.3.2",
+    "path": "^0.12.7",
+    "socket.io": "^4.7.5"
+  }
 }

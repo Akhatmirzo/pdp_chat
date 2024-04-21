@@ -4,7 +4,7 @@ import InputSearch from "../components/sidebar/InputSearch";
 import { Box, Button } from "@mui/material";
 import DarkMode from "../components/etc/DarkMode";
 import AddIcon from "@mui/icons-material/Add";
-import PushPinIcon from "@mui/icons-material/PushPin";
+// import PushPinIcon from "@mui/icons-material/PushPin";
 import MessageIcon from "@mui/icons-material/Message";
 import UserCard from "../components/sidebar/UserCard";
 import { themeContext } from "../context/ThemeContext";
@@ -67,7 +67,11 @@ export default function Sidebar() {
         sx={{
           height: "100vh",
           overflow: "hidden auto",
-          "&::-webkit-scrollbar": { height: 2, width: 2, WebkitAppearance: "none" },
+          "&::-webkit-scrollbar": {
+            height: 2,
+            width: 2,
+            WebkitAppearance: "none",
+          },
           "&::-webkit-scrollbar-thumb": {
             borderRadius: 0,
             border: "2px solid",
@@ -93,36 +97,36 @@ export default function Sidebar() {
             ALL MESSAGES
           </h2>
 
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
-          <UserCard to={'chat/46'} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
+          <UserCard to={"46"} />
         </Box>
       </Box>
     </Box>
