@@ -13,6 +13,12 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import DarkMode from "../components/etc/DarkMode";
 import { useForm } from "react-hook-form";
+import { convertToBase64 } from "../utils/helper";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import { UserRegister } from "../utils/UserApi";
+import { useContext } from "react";
+import { tokenContext } from "../context/TokenContext";
 
 function Copyright(props) {
   return (
@@ -35,11 +41,37 @@ function Copyright(props) {
 // TODO remove, this demo shouldn't need to reset the theme.
 
 export default function SignUp() {
-  const { register, handleSubmit, reset } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
+  const { setToken } = useContext(tokenContext);
+  const [myAvatar, setAvatar] = useState();
 
-  const handleSubData = (data) => {
+  const handleImageInput = async (e) => {
+    const imgFile = e.target.files[0];
+    const imgUrl = await convertToBase64(imgFile);
+    setAvatar(imgUrl);
+  };
+
+  const handleSubData = async (data) => {
     console.log(data);
-    reset();
+    if (myAvatar) {
+      const res = await UserRegister({...data, profilePic: myAvatar});
+
+      if (res?.token) {
+        toast.success("User registered");
+        localStorage.setItem("token", res.token);
+        setToken(res.token);
+        reset();
+      } else {
+        toast.error(res.error || "User registered failed");
+      }
+    } else {
+      toast.error("Please enter a profile picture");
+    }
   };
 
   return (
@@ -70,16 +102,74 @@ export default function SignUp() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <Box component="form" onSubmit={handleSubmit(handleSubData)} sx={{ mt: 3 }}>
+        <Box
+          component="form"
+          onSubmit={handleSubmit(handleSubData)}
+          sx={{ mt: 3, display: "flex", flexDirection: "column", gap: "15px" }}
+        >
+          <Box>
+            <label
+              htmlFor="photos"
+              className="cursor-pointer w-full h-auto flex items-center justify-center"
+            >
+              <Avatar
+                alt="Avatar"
+                src={myAvatar || ""}
+                sx={{ width: 120, height: 120 }}
+              />
+            </label>
+            <input
+              onChange={handleImageInput}
+              type="file"
+              accept=".png, .jpg, .jpeg, .gif"
+              id="photos"
+              name="profilePicture"
+              className="hidden"
+            />
+          </Box>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
                 required
                 fullWidth
-                id="email"
-                label="Email Address"
-                autoComplete="email"
-                {...register("email")}
+                id="fullName"
+                label={
+                  errors?.fullName?.type === "pattern"
+                    ? "Iltimos harflar bilan yozing"
+                    : "fullName"
+                }
+                sx={{
+                  ".Mui-focused": {
+                    color:
+                      errors?.fullName?.type === "pattern"
+                        ? "#ff0000"
+                        : "#90caf9",
+                  },
+                }}
+                autoComplete="off"
+                {...register("fullName", { pattern: /^[a-zA-Z]+\s[a-zA-Z]*$/ })}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                id="username"
+                label={
+                  errors?.username?.type === "pattern"
+                    ? "Iltimos kichik harflar bilan yozing"
+                    : "username"
+                }
+                autoComplete="off"
+                sx={{
+                  ".Mui-focused": {
+                    color:
+                      errors?.username?.type === "pattern"
+                        ? "#ff0000"
+                        : "#90caf9",
+                  },
+                }}
+                {...register("username", { pattern: /^[a-z0-9]*$/g })}
               />
             </Grid>
             <Grid item xs={12}>
@@ -89,13 +179,13 @@ export default function SignUp() {
                 label="Password"
                 type="password"
                 id="password"
-                autoComplete="new-password"
+                autoComplete="off"
                 {...register("password")}
               />
             </Grid>
             <Grid item xs={12}>
               <FormControlLabel
-                control={<Checkbox required color="primary" {...register("accept")} />}
+                control={<Checkbox required color="primary" />}
                 label="I agree to all the terms of the Chat Application. Even to the unwritten rules."
               />
             </Grid>

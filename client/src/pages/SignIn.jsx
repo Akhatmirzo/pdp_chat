@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form"
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -13,6 +13,10 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import DarkMode from "../components/etc/DarkMode";
+import { UserLogin } from "../utils/UserApi";
+import { toast } from "react-toastify";
+import { useContext } from "react";
+import { tokenContext } from "../context/TokenContext";
 
 function Copyright(props) {
   return (
@@ -36,10 +40,21 @@ function Copyright(props) {
 
 export default function SignIn() {
   const { register, handleSubmit, reset } = useForm();
+  const navigate = useNavigate()
+  const { setToken } = useContext(tokenContext)
 
-  const handleSubData = (data) => {
-    console.log(data);
-    reset()
+  const handleSubData = async (data) => {
+    const res = await UserLogin(data);
+
+    if (res?.token) {
+      toast.success("User Authentication");
+      localStorage.setItem("token", res.token);
+      setToken(res.token);
+      navigate("/")
+      reset();
+    } else {
+      toast.error(res.error || "User Auth failed");
+    }
   };
 
   return (
@@ -75,11 +90,11 @@ export default function SignIn() {
             margin="normal"
             required
             fullWidth
-            id="email"
-            label="Email Address"
-            autoComplete="email"
+            id="username"
+            label="username Address"
+            autoComplete="username"
             autoFocus
-            {...register("email")}
+            {...register("username")}
           />
           <TextField
             margin="normal"
@@ -89,7 +104,7 @@ export default function SignIn() {
             type="password"
             id="password"
             autoComplete="current-password"
-            inputProps={{ minLength: 8 }}
+            inputProps={{ minLength: 6 }}
             {...register("password")}
           />
           <FormControlLabel

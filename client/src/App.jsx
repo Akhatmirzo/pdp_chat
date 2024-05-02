@@ -1,14 +1,18 @@
 import "./App.css";
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import { Routes, Route } from "react-router-dom";
 import { Container } from "@mui/material";
-import Sidebar from "./pages/Sidebar";
-import Chat from "./pages/Chat";
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
+import { tokenContext } from "./context/TokenContext";
+import NotFound from "./components/etc/NotFound";
+import ChatApp from "./pages/ChatApp";
+import SocketContext from "./context/SocketContext";
+import UserContext from "./context/UserContext";
+import ChatContext from "./context/ChatContext";
 
 function App() {
-  const [token] = useState();
+  const { token } = useContext(tokenContext);
 
   return (
     <Container
@@ -23,21 +27,20 @@ function App() {
     >
       {token ? (
         <>
-          <Sidebar />
-          <Routes>
-            <Route path="/">
-              <Route index element={<h1>No Content</h1>} />
-              <Route path=":id" element={<Chat />} />
-            </Route>
-            <Route path="*" element={<h1>No Content</h1>} />
-          </Routes>
+          <SocketContext>
+            <UserContext>
+              <ChatContext>
+                <ChatApp />
+              </ChatContext>
+            </UserContext>
+          </SocketContext>
         </>
       ) : (
         <Routes>
           <Route path="/">
             <Route index element={<SignUp />} />
             <Route path="/signin" element={<SignIn />} />
-            <Route path="*" element={<h1>No Content</h1>} />
+            <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
       )}

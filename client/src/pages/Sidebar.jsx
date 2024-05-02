@@ -1,16 +1,34 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import Logo from "../components/sidebar/Logo";
 import InputSearch from "../components/sidebar/InputSearch";
-import { Box, Button } from "@mui/material";
+import { Box, Button, IconButton } from "@mui/material";
 import DarkMode from "../components/etc/DarkMode";
 import AddIcon from "@mui/icons-material/Add";
-// import PushPinIcon from "@mui/icons-material/PushPin";
 import MessageIcon from "@mui/icons-material/Message";
 import UserCard from "../components/sidebar/UserCard";
 import { themeContext } from "../context/ThemeContext";
+import SettingsIcon from "@mui/icons-material/Settings";
+import LogoutIcon from "@mui/icons-material/Logout";
 
-export default function Sidebar() {
+import { userContext } from "../context/UserContext";
+import Loading from "../components/etc/Loading";
+
+export default function Sidebar({active, searchUser, setSearchUser, setIsSearch, activeUsers}) {
   const { mode } = useContext(themeContext);
+  const { users, userloading } = useContext(userContext);
+  const [open, setOpen] = useState(false)
+
+  const leave = () => {
+    let LeaveCheck = window.confirm("Are you sure you want to leave");
+    if (LeaveCheck) {
+      localStorage.removeItem("token");
+      window.location.reload();
+    }
+  };
+
+  function findAcitveUser(id) {
+    return activeUsers?.find((user) => user.id === id);
+  }
 
   return (
     <Box
@@ -37,7 +55,15 @@ export default function Sidebar() {
         }}
       >
         <Logo />
-        <DarkMode />
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <IconButton>
+            <SettingsIcon sx={{ cursor: "pointer" }} />
+          </IconButton>
+          <IconButton onClick={() => leave()}>
+            <LogoutIcon sx={{ cursor: "pointer" }} />
+          </IconButton>
+          <DarkMode />
+        </Box>
       </Box>
       <Box
         sx={{
@@ -48,7 +74,7 @@ export default function Sidebar() {
           gap: "12px",
         }}
       >
-        <InputSearch placeholder={"Search messages, people"} />
+        <InputSearch setSearchUser={setSearchUser} setIsSearch={setIsSearch} setOpen={setOpen} placeholder={"Search messages, people"} />
         <Button
           color="primary"
           variant="contained"
@@ -65,6 +91,7 @@ export default function Sidebar() {
 
       <Box
         sx={{
+          position: "relative",
           height: "100vh",
           overflow: "hidden auto",
           "&::-webkit-scrollbar": {
@@ -78,16 +105,27 @@ export default function Sidebar() {
           },
         }}
       >
-        {/* <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          <h2 className="text-[12px] font-medium flex items-center gap-[8.5px] px-[24px]">
-            <span className="rotate-45">
-              <PushPinIcon fontSize="small" />
-            </span>
-            PINNED CHATS
-          </h2>
-
-          <UserCard />
-        </Box> */}
+        <Box
+          sx={{
+            width: "100%",
+            height: "calc(100vh - 158px)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
+            backgroundColor: "#121212",
+            position: "absolute",
+            top: 0,
+            left: open ? 0 : '-100%',
+            zIndex: 100,
+          }}
+        >
+          <Box>{searchUser?.length > 0 ? (
+              searchUser?.map((user) => <UserCard key={user._id} user={user} />)
+            ) : (
+              "Users not found"
+            )}
+          </Box>
+        </Box>
 
         <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           <h2 className="text-[12px] font-medium flex items-center gap-[8.5px] px-[24px]">
@@ -97,36 +135,16 @@ export default function Sidebar() {
             ALL MESSAGES
           </h2>
 
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
-          <UserCard to={"46"} />
+          {userloading ? (
+            <Loading />
+          ) : users?.length > 0 ? (
+            users?.map((user) => {
+              const actUser = findAcitveUser(user._id);
+              return <UserCard key={user._id} user={user} active={active} actUser={actUser} />
+            })
+          ) : (
+            "Users not found"
+          )}
         </Box>
       </Box>
     </Box>

@@ -16,3 +16,17 @@
 .MuiIcon-fontSizeSmall {
   font-size: 12px;
 }
+
+.typingAnim {
+  animation: typing 1s linear infinite;
+}
+
+/* Anim typing */
+@keyframes typing {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}

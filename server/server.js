@@ -1,9 +1,11 @@
-const { CheckUserConnection } = require("./socket/UserSocket")
-const path = require("path");
-const fastify = require("fastify")();
+const { fastify } = require("./socket/UserSocket");
+// const fastify = require("fastify")();
 const cors = require("@fastify/cors");
 const multipart = require("@fastify/multipart");
-fastify.register(cors);
+fastify.register(cors, {
+  origin: "*",
+  methods: "*",
+});
 fastify.register(multipart);
 require("dotenv").config();
 fastify.register(require("@fastify/swagger"), {
@@ -20,14 +22,17 @@ fastify.register(require("@fastify/swagger"), {
 });
 
 // * Fastify routes
-fastify.register(require("@fastify/static"), {
-  root: path.join(__dirname, "public"),
-  prefix: "/public/",
-});
 
 fastify.get("/", { schema: { tags: ["API"] } }, (req, res) => {
-  res.send("Welcome to the Chat application")
-  // res.sendFile("index.html");
+  res.send("Welcome to the Chat application");
+});
+
+fastify.register(require("./routes/UserRoute"), {
+  prefix: "/api/user",
+});
+
+fastify.register(require("./routes/ChatRoomRoute"), {
+  prefix: "/api/room",
 });
 
 //* MongoDb Connection
@@ -52,6 +57,3 @@ fastify.listen(process.env.PORT || 3000, "0.0.0.0", (err) => {
 
   console.log(`Server is running on port ${process.env.PORT}`);
 });
-
-// Socket io
-CheckUserConnection(fastify)

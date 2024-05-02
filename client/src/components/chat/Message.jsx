@@ -1,10 +1,14 @@
-import React, { useContext } from "react";
+import React, { useContext, forwardRef } from "react";
 import { Avatar, Box } from "@mui/material";
 import { themeContext } from "../../context/ThemeContext";
+import { calcTime } from "../../utils/helper";
 
-export default function Message({ isReceived }) {
+function Message({ messages, members, path }, ref) {
   const { mode } = useContext(themeContext);
+  const sender = members.find((member) => member._id !== path) 
+  const receiver = members.find((member) => member._id === path) 
 
+  const isReceived = messages?.userId !== path;
   const myMessageStyle = isReceived
     ? {
         messageColumn: "row-reverse",
@@ -21,6 +25,7 @@ export default function Message({ isReceived }) {
 
   return (
     <Box
+      ref={ref}
       sx={{
         marginY: 2,
         width: "100%",
@@ -30,25 +35,24 @@ export default function Message({ isReceived }) {
         gap: "14px",
       }}
     >
-      <Avatar sx={{ width: 50, height: 50 }} />
+      <Avatar src={isReceived ? sender?.profilePic : receiver?.profilePic } sx={{ width: 50, height: 50 }} />
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: "12px" }}>
         <h3
           className={`text-[16px] font-medium flex items-center gap-[16px] ${myMessageStyle.titlePosition}`}
         >
-          Grace Miller
-          <span className="text-[12px] font-normal text-[#A0A0A0]">
-            10:30 AM
-          </span>
+          {isReceived ? sender.fullName : receiver.fullName}
+          <span className="text-[12px] font-normal text-[#A0A0A0]">{calcTime(messages?.createdAt)}</span>
         </h3>
 
         <p
           className={`inline-block px-[24px] py-[16px] ${myMessageStyle.backgroundColor} ${myMessageStyle.messageRounded}`}
         >
-          Absolutely! I'm thinking of going for a hike on Saturday. How about
-          you?
+          {messages?.message}
         </p>
       </Box>
     </Box>
   );
 }
+
+export default forwardRef(Message);
