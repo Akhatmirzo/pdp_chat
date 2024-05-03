@@ -3,10 +3,10 @@ import { Avatar, Box } from "@mui/material";
 import { themeContext } from "../../context/ThemeContext";
 import { calcTime } from "../../utils/helper";
 
-function Message({ messages, members, path }, ref) {
+function Message({ messages, members, path, handleContextMenu }, ref) {
   const { mode } = useContext(themeContext);
-  const sender = members.find((member) => member._id !== path) 
-  const receiver = members.find((member) => member._id === path) 
+  const sender = members.find((member) => member._id !== path);
+  const receiver = members.find((member) => member._id === path);
 
   const isReceived = messages?.userId !== path;
   const myMessageStyle = isReceived
@@ -34,15 +34,24 @@ function Message({ messages, members, path }, ref) {
         flexDirection: myMessageStyle.messageColumn,
         gap: "14px",
       }}
+
+      onContextMenu={(e) => {
+        handleContextMenu(e, messages?._id)
+      }}
     >
-      <Avatar src={isReceived ? sender?.profilePic : receiver?.profilePic } sx={{ width: 50, height: 50 }} />
+      <Avatar
+        src={isReceived ? sender?.profilePic : receiver?.profilePic}
+        sx={{ width: 50, height: 50 }}
+      />
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: "12px" }}>
         <h3
           className={`text-[16px] font-medium flex items-center gap-[16px] ${myMessageStyle.titlePosition}`}
         >
           {isReceived ? sender.fullName : receiver.fullName}
-          <span className="text-[12px] font-normal text-[#A0A0A0]">{calcTime(messages?.createdAt)}</span>
+          <span className="text-[12px] font-normal text-[#A0A0A0]">
+            {calcTime(messages?.createdAt)}
+          </span>
         </h3>
 
         <p

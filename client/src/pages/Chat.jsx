@@ -4,11 +4,18 @@ import ChatNavbar from "../components/chat/ChatNavbar";
 import ChatMessageInputs from "../components/chat/ChatMessageInputs";
 import Message from "../components/chat/Message";
 import Nomessages from "../components/etc/Nomessages";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import PushPinIcon from "@mui/icons-material/PushPin";
 import { themeContext } from "../context/ThemeContext";
 import { userContext } from "../context/UserContext";
 import { useParams } from "react-router-dom";
 import { chatContext } from "../context/ChatContext";
 import { socketContext } from "../context/SocketContext";
+import { toast } from "react-toastify";
 
 export default function Chat({
   actDispatch,
@@ -25,6 +32,7 @@ export default function Chat({
   const { mode } = useContext(themeContext);
   const receiver = useParams();
   const lastMessageRef = useRef(null);
+  const [copy, setCopy] = useState();
 
   useEffect(() => {
     function findAcitveUser(id) {
@@ -82,6 +90,37 @@ export default function Chat({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [receiver, chats]);
 
+  // OnContextMenu
+  const [contextMenu, setContextMenu] = React.useState(null);
+
+  const handleContextMenu = (event, msgId) => {
+    event.preventDefault();
+    setCopy(event.target.innerText);
+    setContextMenu(
+      contextMenu === null
+        ? {
+            mouseX: event.clientX + 2,
+            mouseY: event.clientY - 6,
+          }
+        : null
+    );
+
+    console.log(msgId);
+  };
+
+  const handleClose = () => {
+    setContextMenu(null);
+  };
+
+  const copyMessage = () => {
+    if (copy) {
+      window.navigator.clipboard.writeText(copy);
+      toast.success("Message Copied");
+
+      handleClose();
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -111,6 +150,42 @@ export default function Chat({
           },
         }}
       >
+        <Menu
+          open={contextMenu !== null}
+          onClose={handleClose}
+          anchorReference="anchorPosition"
+          anchorPosition={
+            contextMenu !== null
+              ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+              : undefined
+          }
+        >
+          <MenuItem
+            onClick={copyMessage}
+            sx={{ display: "flex", alignItems: "center", gap: "5px" }}
+          >
+            <ContentCopyIcon /> Copy
+          </MenuItem>
+          <MenuItem
+            onClick={handleClose}
+            sx={{ display: "flex", alignItems: "center", gap: "5px" }}
+          >
+            <EditIcon /> Edit
+          </MenuItem>
+          <MenuItem
+            onClick={handleClose}
+            sx={{ display: "flex", alignItems: "center", gap: "5px" }}
+          >
+            <DeleteIcon /> Delete
+          </MenuItem>
+          <MenuItem
+            onClick={handleClose}
+            sx={{ display: "flex", alignItems: "center", gap: "5px" }}
+          >
+            <PushPinIcon /> Pin
+          </MenuItem>
+        </Menu>
+
         {user ? (
           <Box
             sx={{
@@ -134,6 +209,7 @@ export default function Chat({
                     path={receiver?.id}
                     messages={msg}
                     members={chat?.members}
+                    handleContextMenu={handleContextMenu}
                   />
                 );
               })

@@ -33,8 +33,10 @@ export default function ChatMessageInputs({ path, user, chatId, members }) {
   const sendMessage = async (e) => {
     e.preventDefault();
 
-    if (message) {
-      console.log(socket);
+    let TrimMessage = message.trim();
+
+    if (TrimMessage) {
+      setMessage(TrimMessage);
       try {
         const sending = await SendMessage(message, path?.id);
 
@@ -47,6 +49,8 @@ export default function ChatMessageInputs({ path, user, chatId, members }) {
       } catch (error) {
         console.log(error);
       }
+    } else {
+      setMessage("");
     }
   };
 

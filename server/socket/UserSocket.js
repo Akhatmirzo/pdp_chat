@@ -44,13 +44,17 @@ io.on("connection", async (socket) => {
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
   socket.on("writeMessage", (data) => {
-    console.log(data);
+    const time = 5000 + (data.message.length * 1000);
     const receiverSocketId = getReceiverSocketId(data.receiverId);
     if (receiverSocketId) {
       // io.to(<socket_id>).emit()
       
       if (data?.message) {
         io.to(receiverSocketId).emit("writeMessage", {id: data.senderId, typing: true});
+
+        setTimeout(() => {
+          io.to(receiverSocketId).emit("writeMessage", {id: data.senderId, typing: false});
+        }, time)
       }else {
         io.to(receiverSocketId).emit("writeMessage", {id: data.senderId, typing: false});
       }
