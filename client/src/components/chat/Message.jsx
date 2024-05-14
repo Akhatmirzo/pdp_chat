@@ -1,7 +1,9 @@
-import React, { useContext, forwardRef } from "react";
+import React, { useContext, forwardRef, useEffect } from "react";
 import { Avatar, Box } from "@mui/material";
 import { themeContext } from "../../context/ThemeContext";
 import { calcTime } from "../../utils/helper";
+import FileMessage from "./etc/FileMessage";
+import AudioFileMessage from "./etc/AudioFileMessage";
 
 function Message({ messages, members, path, handleContextMenu }, ref) {
   const { mode } = useContext(themeContext);
@@ -12,13 +14,19 @@ function Message({ messages, members, path, handleContextMenu }, ref) {
   const myMessageStyle = isReceived
     ? {
         messageColumn: "row-reverse",
-        messageRounded: "rounded-[14px_0px_14px_14px]",
+        messageRounded:
+          messages?.files.length > 0
+            ? "rounded-[0px_0px_14px_14px]"
+            : "rounded-[14px_0px_14px_14px]",
         titlePosition: "flex-row-reverse",
         backgroundColor: "bg-[#00A3FF]",
       }
     : {
         messageColumn: "row",
-        messageRounded: "rounded-[0px_14px_14px_14px]",
+        messageRounded:
+          messages?.files.length > 0
+            ? "rounded-[0px_0px_14px_14px]"
+            : "rounded-[0px_14px_14px_14px]",
         titlePosition: "flex-row",
         backgroundColor: mode ? "border border-[#292929]" : "bg-[#292929]",
       };
@@ -34,9 +42,8 @@ function Message({ messages, members, path, handleContextMenu }, ref) {
         flexDirection: myMessageStyle.messageColumn,
         gap: "14px",
       }}
-
       onContextMenu={(e) => {
-        handleContextMenu(e, messages?._id)
+        handleContextMenu(e, messages?._id, messages?.userId);
       }}
     >
       <Avatar
@@ -44,7 +51,14 @@ function Message({ messages, members, path, handleContextMenu }, ref) {
         sx={{ width: 50, height: 50 }}
       />
 
-      <Box sx={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "12px",
+          maxWidth: "80%",
+        }}
+      >
         <h3
           className={`text-[16px] font-medium flex items-center gap-[16px] ${myMessageStyle.titlePosition}`}
         >
@@ -54,11 +68,30 @@ function Message({ messages, members, path, handleContextMenu }, ref) {
           </span>
         </h3>
 
-        <p
-          className={`inline-block px-[24px] py-[16px] ${myMessageStyle.backgroundColor} ${myMessageStyle.messageRounded}`}
-        >
-          {messages?.message}
-        </p>
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Box>
+            {messages.files.map((file) =>
+              file.type.includes("image") ? (
+                <img
+                  src={file.dataUrl}
+                  alt={file.name}
+                  className="w-full rounded-t-[14px]"
+                />
+              ) : (
+                file.type.includes("audio") ? <AudioFileMessage file={file} bg={myMessageStyle.backgroundColor} /> : <FileMessage file={file} bg={myMessageStyle.backgroundColor} />
+              )
+            )}
+          </Box>
+          {messages?.message ? (
+            <p
+              className={`inline-block w-full px-[24px] py-[16px] ${myMessageStyle.backgroundColor} ${myMessageStyle.messageRounded}`}
+            >
+              {messages?.message}
+            </p>
+          ) : (
+            ""
+          )}
+        </Box>
       </Box>
     </Box>
   );

@@ -121,7 +121,7 @@ export default function SignUp() {
             <input
               onChange={handleImageInput}
               type="file"
-              accept=".png, .jpg, .jpeg, .gif"
+              accept=".png, .jpg, .jpeg, .gif, .jfif"
               id="photos"
               name="profilePicture"
               className="hidden"

@@ -1,0 +1,48 @@
+.box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  filter: blur(1px) contrast(10);
+  mix-blend-mode: screen;
+}
+.visualizer {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: #fff;
+  transition: 0.5s;
+  transform: rotateZ(180deg);
+}
+
+.play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150px;
+  height: 150px;
+  background: #2a2a2a;
+  border-radius: 50%;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-play {
+  cursor: pointer;
+}
+
+.element {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: block;
+  width: var(--i);
+  height: var(--i);
+  border-radius: 100%;
+  transition: 0.20s;
+  border: 1px solid #eee;
+}

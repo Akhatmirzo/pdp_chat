@@ -17,4 +17,27 @@ function calcTime(date) {
   return time[0];
 }
 
-export { convertToBase64, calcTime };
+function checkEmptySpace(string) {
+  let newStr = "";
+  let letterPosStart = null;
+  let letterPosEnd = null;
+  
+  for (let i = 0; i < string.length; i++) {
+    if (string[i] !== " ") {
+        letterPosStart = i;
+      break;
+    }
+  }
+  
+  for (let i = string.length - 1; i >= 0; i--) {
+    if (string[i] !== " ") {
+        letterPosEnd = i;
+      break;
+    }
+  }
+  
+  newStr = string.slice(letterPosStart, letterPosEnd);
+  return newStr;
+}
+
+export { convertToBase64, calcTime, checkEmptySpace };

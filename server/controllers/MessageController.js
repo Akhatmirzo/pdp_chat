@@ -4,14 +4,16 @@ const { getReceiverSocketId, io } = require("../socket/UserSocket");
 const User = require("../models/UserSchema");
 
 exports.sendMessage = async (req, res) => {
-  const { message } = req.body;
+  const { message, files, audio } = req.body;
   const receiverId = req.params.id;
   const senderId = req.userId;
+
+  // Check new Created chat room
   let newCreated = false;
 
-  if (!message) {
+  if ((!message && !files) && !audio) {
     return res.status(400).send({
-      error: "Message cannot be empty",
+      error: "Data cannot be empty",
     });
   }
 
@@ -28,12 +30,22 @@ exports.sendMessage = async (req, res) => {
       newCreated = true;
     }
 
-    const newMessage = new Message({
+    const msgObj = {
       senderId,
       receiverId,
       userId: senderId,
       message,
-    });
+    }
+
+    if (files) {
+      msgObj.files = files;
+    }
+
+    if (audio) {
+      msgObj.files = audio;
+    }
+
+    const newMessage = new Message(msgObj);
 
     if (newMessage) {
       room.messages.push(newMessage._id);
@@ -108,13 +120,15 @@ exports.deleteMessage = async (req, res) => {
   const senderId = req.userId;
 
   try {
-    const message = await Message.findByIdAndDelete({ _id: messageId });
+    const message = await Message.findById({ _id: messageId });
 
     if (message.senderId.toString() !== senderId.toString()) {
       return res.status(401).send({
         error: "You are not permitted to delete this message",
       });
     }
+
+    await Message.findByIdAndDelete({ _id: messageId });
 
     res.status(200).send({
       message: "Message deleted successfully",

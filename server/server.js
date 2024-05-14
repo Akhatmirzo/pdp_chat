@@ -1,5 +1,4 @@
 const { fastify } = require("./socket/UserSocket");
-// const fastify = require("fastify")();
 const cors = require("@fastify/cors");
 const multipart = require("@fastify/multipart");
 fastify.register(cors, {
@@ -7,6 +6,7 @@ fastify.register(cors, {
   methods: "*",
 });
 fastify.register(multipart);
+
 require("dotenv").config();
 fastify.register(require("@fastify/swagger"), {
   exposeRoute: true,
@@ -22,7 +22,6 @@ fastify.register(require("@fastify/swagger"), {
 });
 
 // * Fastify routes
-
 fastify.get("/", { schema: { tags: ["API"] } }, (req, res) => {
   res.send("Welcome to the Chat application");
 });

@@ -16,6 +16,7 @@ import { useParams } from "react-router-dom";
 import { chatContext } from "../context/ChatContext";
 import { socketContext } from "../context/SocketContext";
 import { toast } from "react-toastify";
+import { DeleteMessage } from "../utils/ChatApi";
 
 export default function Chat({
   actDispatch,
@@ -24,7 +25,7 @@ export default function Chat({
   activeUsers,
 }) {
   const { users, userloading } = useContext(userContext);
-  const { chats, chatsloading } = useContext(chatContext);
+  const { chats, chatsloading, ChatsDispatch } = useContext(chatContext);
   const { onlineUsers } = useContext(socketContext);
   const [activeUser, setActiveUser] = useState();
   const [user, setUser] = useState();
@@ -33,6 +34,12 @@ export default function Chat({
   const receiver = useParams();
   const lastMessageRef = useRef(null);
   const [copy, setCopy] = useState();
+  const [access, setAccess] = useState();
+  const [editing, setEditing] = useState({
+    id: "",
+    message: "",
+    edit: false,
+  });
 
   useEffect(() => {
     function findAcitveUser(id) {
@@ -41,7 +48,6 @@ export default function Chat({
     // Online Users check
     const actUser = findAcitveUser(user?._id);
     setActiveUser(actUser);
-    console.log(actUser);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onlineUsers, receiver]);
 
@@ -93,9 +99,18 @@ export default function Chat({
   // OnContextMenu
   const [contextMenu, setContextMenu] = React.useState(null);
 
-  const handleContextMenu = (event, msgId) => {
+  const handleContextMenu = (event, msgId, userId) => {
     event.preventDefault();
     setCopy(event.target.innerText);
+
+    setEditing({ id: msgId, message: event.target.innerText, edit: false });
+
+    if (receiver?.id !== userId) {
+      setAccess(true);
+    } else {
+      setAccess(false);
+    }
+
     setContextMenu(
       contextMenu === null
         ? {
@@ -104,8 +119,6 @@ export default function Chat({
           }
         : null
     );
-
-    console.log(msgId);
   };
 
   const handleClose = () => {
@@ -118,6 +131,31 @@ export default function Chat({
       toast.success("Message Copied");
 
       handleClose();
+    }
+  };
+
+  const editMessage = () => {
+    setEditing({ ...editing, edit: true });
+  };
+
+  const deleteMessage = async () => {
+    try {
+      const res = await DeleteMessage(editing?.id);
+
+      if (!res) {
+        throw new Error("Couldn't Delete message");
+      }
+
+      ChatsDispatch({
+        type: "DELETE_CHAT_MSG",
+        chatId: chat?._id,
+        id: editing?.id,
+      });
+
+      handleClose();
+    } catch (error) {
+      console.log(error);
+      toast.error("Couldn't Delete message");
     }
   };
 
@@ -166,18 +204,24 @@ export default function Chat({
           >
             <ContentCopyIcon /> Copy
           </MenuItem>
-          <MenuItem
-            onClick={handleClose}
-            sx={{ display: "flex", alignItems: "center", gap: "5px" }}
-          >
-            <EditIcon /> Edit
-          </MenuItem>
-          <MenuItem
-            onClick={handleClose}
-            sx={{ display: "flex", alignItems: "center", gap: "5px" }}
-          >
-            <DeleteIcon /> Delete
-          </MenuItem>
+          {access ? (
+            <Box>
+              <MenuItem
+                onClick={editMessage}
+                sx={{ display: "flex", alignItems: "center", gap: "5px" }}
+              >
+                <EditIcon /> Edit
+              </MenuItem>
+              <MenuItem
+                onClick={deleteMessage}
+                sx={{ display: "flex", alignItems: "center", gap: "5px" }}
+              >
+                <DeleteIcon /> Delete
+              </MenuItem>
+            </Box>
+          ) : (
+            ""
+          )}
           <MenuItem
             onClick={handleClose}
             sx={{ display: "flex", alignItems: "center", gap: "5px" }}
@@ -198,6 +242,7 @@ export default function Chat({
               justifyContent: "flex-end",
               backgroundColor: mode ? "" : "rgba(24, 24, 24, 1)",
             }}
+            onContextMenu={(e) => e.preventDefault()}
           >
             {
               // eslint-disable-next-line array-callback-return
@@ -225,7 +270,10 @@ export default function Chat({
         user={user}
         members={chat?.members}
         chatId={chat?._id}
+        editing={editing.edit ? editing : null}
+        setEditing={setEditing}
       />
+
     </Box>
   );
 }

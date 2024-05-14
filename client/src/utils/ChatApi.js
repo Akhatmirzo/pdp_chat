@@ -8,7 +8,7 @@ async function SendMessage(data, id) {
         "Content-Type": "application/json",
         Authorization: localStorage.getItem("token"),
       },
-      body: JSON.stringify({ message: data }),
+      body: JSON.stringify(data),
     });
 
     if (response.status !== 200) {
@@ -18,6 +18,49 @@ async function SendMessage(data, id) {
 
     const res = await response.json();
 
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+}
+async function EditMessage(data, id) {
+  try {
+    const response = await fetch(`${API_URL}messages/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+      body: JSON.stringify({ message: data }),
+    });
+
+    if (response.status !== 200) {
+      console.log(response);
+      throw new Error("Message edit failed");
+    }
+
+    const res = await response.json();
+
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function DeleteMessage(id) {
+  try {
+    const response = await fetch(`${API_URL}messages/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+    });
+    if (response.status!== 200) {
+      console.log(response);
+      throw new Error("Message not deleted");
+    }
+    const res = await response.json();
     return res;
   } catch (error) {
     console.log(error);
@@ -50,4 +93,4 @@ async function GetChatRooms() {
   }
 }
 
-export { GetChatRooms, SendMessage };
+export { GetChatRooms, SendMessage, EditMessage, DeleteMessage };
